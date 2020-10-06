@@ -25,13 +25,7 @@ app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
 
 
-
-
 app.use(express.static(publicDirectoryPath)) //Express will run through and send directory. However, index.html has special name will be default 
-
-
-
-
 
 
 
