@@ -16,10 +16,9 @@ const forecast = require('./utils/forecast')
 
 //Define paths for Express config
 const publicDirectoryPath = path.join(__dirname, "../public")
-const viewsPath = path.join(__dirname, '../templates/views')
-const partialsPath = path.join(__dirname, '../templates/partials')
+const viewsPath = path.join(__dirname, "..", "/templates/views")
+const partialsPath = path.join(__dirname, "..", '/templates/partials')
 
-hbs.registerPartials(partialsPath) //Takes argument to directory of partials 
 
 //Setup handlebars engine and views location
 app.set('view engine', 'hbs') //Sets express viewengine as hbs, express requires us to have the hbs template in views folder 
@@ -27,6 +26,7 @@ app.set('views', viewsPath) //Sets views directory to custom directory
 app.use(express.static(publicDirectoryPath)) //Express will run through and send directory. However, index.html has special name will be default 
 
 
+hbs.registerPartials(partialsPath) //Takes argument to directory of partials 
 
 app.get('',(req,res)=>{
     res.render('index',{
