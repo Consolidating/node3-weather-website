@@ -1,18 +1,11 @@
-//CORE MODULES
 const path = require('path')
-
-
-//NPM MOdules
-const express = require('express'); //Express libary exposes a single function
-const hbs = require('hbs') 
-const app = express();
-const port = process.env.PORT || 3000
-
-//Project Modules
+const express = require('express')
+const hbs = require('hbs')
 const geocode = require('./utils/geocode')
 const forecast = require('./utils/forecast')
 
-
+const app = express()
+const port = process.env.PORT || 3000
 
 // Define paths for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
@@ -24,98 +17,86 @@ app.set('view engine', 'hbs')
 app.set('views', viewsPath)
 hbs.registerPartials(partialsPath)
 
+// Setup static directory to serve
+app.use(express.static(publicDirectoryPath))
 
-app.use(express.static(publicDirectoryPath)) //Express will run through and send directory. However, index.html has special name will be default 
-
-
-
-app.get('',(req,res)=>{
-    res.render('index',{
-        title: 'Weather App',
-        name: "Robert Wang"
-    }) //render allow us to render one of our views 
-})
-
-
-app.get('/about',(req,res)=>{
-    res.render('about',{
-        title: 'About Me',
-        name: "Robert Wang"
+app.get('', (req, res) => {
+    res.render('index', {
+        title: 'Weather',
+        name: 'Andrew Mead'
     })
 })
 
-app.get('/help',(req,res)=>{
-    res.render('help',{
-        title: 'Help',
-        name: "Robert Wang",
-        message: "this is help info"
-    }) 
+app.get('/about', (req, res) => {
+    res.render('about', {
+        title: 'About Me',
+        name: 'Andrew Mead'
+    })
 })
 
+app.get('/help', (req, res) => {
+    res.render('help', {
+        helpText: 'This is some helpful text.',
+        title: 'Help',
+        name: 'Andrew Mead'
+    })
+})
 
+app.get('/weather', (req, res) => {
+    if (!req.query.address) {
+        return res.send({
+            error: 'You must provide an address!'
+        })
+    }
 
-app.get('/weather', (req,res)=>{
-
-    if (!req.query.address){
-              return res.send( //Stops function execution so we don't send twice 
-              {error: "You must provide a search term"}
-              )
-          }
-
-
-
-    geocode(req.query.address, (error, {latitude, longitude, location} = {}) => { //Destructure. However, if error we set default to blank object so it doesnt fail
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
         if (error) {
-            return res.send( {error: error})
+            return res.send({ error })
         }
-        forecast(latitude, longitude, (error, forecastData) => {
 
-          if (error) {
-                return res.send( //Stops function execution so we don't send twice 
-                {error: "You must provide a search term"}
-                )
+        forecast(latitude, longitude, (error, forecastData) => {
+            if (error) {
+                return res.send({ error })
             }
 
-            res.send(
-                {
-                    location,
-                    forecast: forecastData,
-                    address: req.query.address
-                }
-                
-                )
-
+            res.send({
+                forecast: forecastData,
+                location,
+                address: req.query.address
+            })
         })
     })
-
 })
 
+app.get('/products', (req, res) => {
+    if (!req.query.search) {
+        return res.send({
+            error: 'You must provide a search term'
+        })
+    }
 
-app.get('/help/*', (req,res)=>{
-    res.render('404',{
-        title: "404 Page",
-        errorMessage: "Help Article Not Found",
-        name:"Robert Wang"
+    console.log(req.query.search)
+    res.send({
+        products: []
     })
 })
 
-
-
-//Wildcar - * Match anything not matched so far 
-app.get('*', (req,res)=>{
-    res.render('404',{
-        title: "404 Page",
-        errorMessage: "Page not found.",
-        name: "Robert Wang"
+app.get('/help/*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: 'Andrew Mead',
+        errorMessage: 'Help article not found.'
     })
 })
 
+app.get('*', (req, res) => {
+    res.render('404', {
+        title: '404',
+        name: 'Andrew Mead',
+        errorMessage: 'Page not found.'
+    })
+})
 
-//Start Server Up
-//Common Development Port is Port 3000 
-//Server will never stop
-//Need to change port value provided by HEROKU via environmental variable (key value pair at OS level) 
-app.listen(port, ()=>{
-    console.log("Server is now running on port " + port)
-});
-
+app.listen(port, () => {
+    console.log('Server is up on port ' + port)
+})
