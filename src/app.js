@@ -6,6 +6,7 @@ const path = require('path')
 const express = require('express'); //Express libary exposes a single function
 const hbs = require('hbs') 
 const app = express();
+const port = process.env.PORT || 3000
 
 //Project Modules
 const geocode = require('./utils/geocode')
@@ -109,8 +110,9 @@ app.get('*', (req,res)=>{
 
 //Start Server Up
 //Common Development Port is Port 3000 
-//Server will never stop 
-app.listen(3000, ()=>{
-    console.log("Server is now running on port 3000")
+//Server will never stop
+//Need to change port value provided by HEROKU via environmental variable (key value pair at OS level) 
+app.listen(port, ()=>{
+    console.log("Server is now running on port " + port)
 });
 
