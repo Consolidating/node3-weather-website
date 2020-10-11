@@ -5,7 +5,6 @@ const forecast = (latitude, longitude, callback)=>{
     const weatherStackUrl = 'http://api.weatherstack.com/current'
     const weatherStackApiKey = "304f0ce68269cccbdca0a0be5ebe6e6d"
 
-    
     request( {url:weatherStackUrl, qs:{access_key:weatherStackApiKey, query: `${latitude}, ${longitude}`, units: 'm'}, json:true}, (error, {body})=>{
 
              if (error){
@@ -13,10 +12,7 @@ const forecast = (latitude, longitude, callback)=>{
              } else if(body.error){
                  callback("Unable to find location", undefined)
              }else {
-                 
-                 callback(undefined, `${body.current.weather_descriptions}. It is currently ${body.current.temperature} degrees out. It feels like  ${body.current.feelslike} degrees `)
-
-            
+                 callback(undefined, `${body.current.weather_descriptions}. It is currently ${body.current.temperature} degrees out. It feels like  ${body.current.feelslike} degrees.`)
              }
          })
 }
